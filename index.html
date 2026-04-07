@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Cinema Matriz - Reserva de Assentos 3x4</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #000000 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Card Principal do Cinema */
+        .card-cinema {
+            background: rgb(255, 255, 255);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        /* Cabeçalho do Cinema (personalizável via código) */
+        .cabecalho-cinema {
+            padding: 25px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .nome-cinema {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .endereco-cinema {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .info-filme {
+            background: rgba(0, 0, 0, 0);
+            padding: 12px;
+            border-radius: 15px;
+            margin-top: 10px;
+        }
+
+        .info-filme p {
+            margin: 5px 0;
+        }
+
+        /* Tela do Cinema */
+        .tela-container {
+            text-align: center;
+            margin: 20px 30px;
+        }
+
+        .tela {
+            background: #000000;
+            color: rgb(255, 0, 0);
+            padding: 12px;
+            border-radius: 10px 10px 30px 30px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        /* Mapa de Assentos (MATRIZ 3x4) */
+        .mapa-assentos {
+            display: flex;
+            justify-content: center;
+            margin: 30px;
+        }
+
+        .matriz-assentos {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .linha-assentos {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .assento {
+            width: 70px;
+            height: 70px;
+            background: #ffffff;
+            border-radius: 15px 15px 25px 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .assento:hover {
+            transform: scale(1.05);
+        }
+
+        .assento.ocupado {
+            background: #ea00ff;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .assento.selecionado {
+            background: #09ff00;
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2ecc71;
+        }
+
+        .assento .numero {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .assento .posicao {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        /* Legenda */
+        .legenda {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            flex-wrap: wrap;
+        }
+
+        .legenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+
+        .legenda-cor {
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+        }
+
+        /* Painel de Reserva */
+        .painel-reserva {
+            background: #ffffff;
+            margin: 20px 30px 30px;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .resumo-reserva {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .btn-reservar {
+            background: #ff0000;
+            color: rgb(0, 0, 0);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-reservar:hover {
+            background: #ff0000;
+            transform: scale(1.02);
+        }
+
+        .btn-limpar {
+            background: #95a5a6;
+            margin-left: 10px;
+        }
+
+        .btn-limpar:hover {
+            background: #30949b;
+        }
+
+        /* Rodapé com Conceito de Matriz */
+        .rodape-conceito {
+            background: #000000;
+            color: rgb(255, 0, 0);
+            text-align: center;
+            padding: 15px;
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 30px;
+            border-radius: 20px;
+        }
+
+        .rodape-conceito code {
+            background: #000000;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+
+        .dica-codigo {
+            background: #ffffff;
+            border-left: 5px solid #ff0000;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+
+        .dica-codigo code {
+            background: #000000;
+            color: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Dica para os alunos -->
+        <div class="dica-codigo">
+            💡 <strong>DESAFIO:</strong> Personalize o cinema editando o código JavaScript!<br>
+            📝 Localize as variáveis no início do <code>&lt;script&gt;</code> (procure por "// ===== CONFIGURAÇÕES PERSONALIZÁVEIS =====")<br>
+            🎨 Altere: nome do cinema, endereço, filme, horário, cores e até os assentos ocupados!
+        </div>
+
+        <!-- Card Principal do Cinema -->
+        <div class="card-cinema">
+            <div class="cabecalho-cinema" id="cabecalhoCinema">
+                <div class="nome-cinema" id="displayNomeCinema">Cine Matriz</div>
+                <div class="endereco-cinema" id="displayEndereco">Av. das Matrizes, 123 - Centro</div>
+                <div class="info-filme" id="infoFilme">
+                    <p>🎬 <strong id="displayFilme">Matrix: Resgate 3x4</strong></p>
+                    <p>⏰ <strong id="displayHorario">20:30 - Sala 1</strong></p>
+                </div>
+            </div>
+
+            <div class="tela-container">
+                <div class="tela">🎬 TELA GIGANTE 🎬</div>
+            </div>
+
+            <!-- Mapa de Assentos: MATRIZ 3x4 -->
+            <div class="mapa-assentos">
+                <div class="matriz-assentos" id="matrizAssentos"></div>
+            </div>
+
+            <!-- Legenda -->
+            <div class="legenda">
+                <div class="legenda-item"><div class="legenda-cor" style="background:#e0e0e0;"></div> <span>Disponível</span></div>
+                <div class="legenda-item"><div class="legenda-cor" style="background:#2ecc71;"></div> <span>Selecionado</span></div>
+                <div class="legenda-item"><div class="legenda-cor" style="background:#e100ff;"></div> <span>Reservado</span></div>
+            </div>
+
+            <!-- Painel de Reserva -->
+            <div class="painel-reserva">
+                <div class="resumo-reserva" id="resumoReserva">
+                    Nenhum assento selecionado
+                </div>
+                <button class="btn-reservar" id="btnReservar">✅ Reservar Assentos</button>
+                <button class="btn-reservar btn-limpar" id="btnLimpar">🗑️ Limpar Seleção</button>
+            </div>
+        </div>
+
+        <!-- Rodapé com Explicação do Conceito de Matriz -->
+        <div class="rodape-conceito">
+            <p>📊 <strong>Conceito de Matriz aplicado:</strong> Os assentos formam uma matriz <code>3 LINHAS × 4 COLUNAS</code>.</p>
+            <p>💡 Cada assento é acessado como <code>assentos[linha][coluna]</code> (índices 0 a 2 e 0 a 3).</p>
+            <p>🔧 <strong>Desafio extra:</strong> Tente modificar a matriz para 4x5 ou adicionar novas cores!</p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // 🎨 CONFIGURAÇÕES PERSONALIZÁVEIS PELOS ALUNOS
+        // ============================================
+        // ALTERE OS VALORES ABAIXO PARA PERSONALIZAR O CINEMA!
+        
+        // DADOS DO CINEMA
+        const NOME_CINEMA = "Cinema do Álvaro";
+        const ENDERECO = "Av. do lindao 665";
+        const NOME_FILME = "Homem aranha: um novo amanhecer";
+        const HORARIO = "20:30 - Sala 1";
+        
+        // CORES (use nomes em inglês ou código hexadecimal)
+        // Exemplos: "blue", "red", "#3498db", "purple", "darkgreen"
+        const COR_CABECALHO = "#000000";   // Cor de fundo do cabeçalho
+        const COR_TEXTO = "#ff0000";       // Cor do texto no cabeçalho
+        const COR_BOTOES = "#000000";      // Cor dos botões
+        
+        // ============================================
+        // MATRIZ DE ASSENTOS 3x4
+        // ============================================
+        // Status possíveis: "livre", "selecionado", "ocupado"
+        // Altere alguns "livre" para "ocupado" para pré-reservar assentos!
+        
+        let assentos = [
+            ["livre", "ocupado", "livre", "livre"],   // Linha 0 (A)
+            ["livre", "livre", "livre", "livre"],     // Linha 1 (B)
+            ["livre", "livre", "livre", "ocupado"]    // Linha 2 (C)
+        ];
+        
+        // ============================================
+        // FIM DAS CONFIGURAÇÕES - NÃO MEXA DAQUI PRA BAIXO!
+        // ============================================
+        
+        // Aplicar personalização
+        function aplicarPersonalizacao() {
+            const cabecalho = document.getElementById("cabecalhoCinema");
+            cabecalho.style.backgroundColor = COR_CABECALHO;
+            cabecalho.style.color = COR_TEXTO;
+            
+            document.getElementById("displayNomeCinema").innerText = NOME_CINEMA;
+            document.getElementById("displayEndereco").innerText = ENDERECO;
+            document.getElementById("displayFilme").innerText = NOME_FILME;
+            document.getElementById("displayHorario").innerText = HORARIO;
+            
+            const botoes = document.querySelectorAll(".btn-reservar");
+            botoes.forEach(botao => {
+                botao.style.backgroundColor = COR_BOTOES;
+                botao.style.color = "#ff0000";
+            });
+        }
+        
+        // Renderizar matriz 3x4
+        function renderizarMatriz() {
+            const container = document.getElementById("matrizAssentos");
+            container.innerHTML = "";
+            
+            for (let linha = 0; linha < 3; linha++) {
+                const divLinha = document.createElement("div");
+                divLinha.className = "linha-assentos";
+                
+                for (let coluna = 0; coluna < 4; coluna++) {
+                    const assentoDiv = document.createElement("div");
+                    assentoDiv.className = "assento";
+                    
+                    const status = assentos[linha][coluna];
+                    if (status === "ocupado") {
+                        assentoDiv.classList.add("ocupado");
+                    } else if (status === "selecionado") {
+                        assentoDiv.classList.add("selecionado");
+                    }
+                    
+                    const numeroAssento = (linha * 4 + coluna + 1);
+                    const letraLinha = String.fromCharCode(65 + linha);
+                    
+                    assentoDiv.innerHTML = `
+                        <div class="numero">${numeroAssento}</div>
+                        <div class="posicao">${letraLinha}${coluna + 1}</div>
+                    `;
+                    
+                    assentoDiv.onclick = (function(l, c) {
+                        return function() {
+                            if (assentos[l][c] === "ocupado") {
+                                alert("❌ Assento já reservado! Escolha outro.");
+                                return;
+                            }
+                            if (assentos[l][c] === "selecionado") {
+                                assentos[l][c] = "livre";
+                            } else {
+                                assentos[l][c] = "selecionado";
+                            }
+                            renderizarMatriz();
+                            atualizarResumo();
+                        };
+                    })(linha, coluna);
+                    
+                    divLinha.appendChild(assentoDiv);
+                }
+                container.appendChild(divLinha);
+            }
+        }
+        
+        // Atualizar resumo
+        function atualizarResumo() {
+            let selecionados = [];
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (assentos[i][j] === "selecionado") {
+                        const numero = (i * 4 + j + 1);
+                        const letra = String.fromCharCode(65 + i);
+                        selecionados.push(`${letra}${j + 1} (${numero})`);
+                    }
+                }
+            }
+            
+            const resumoDiv = document.getElementById("resumoReserva");
+            if (selecionados.length === 0) {
+                resumoDiv.innerHTML = "🎫 Nenhum assento selecionado";
+            } else {
+                resumoDiv.innerHTML = `🎫 Assentos selecionados: <strong>${selecionados.join(", ")}</strong> (${selecionados.length} assento(s))`;
+            }
+        }
+        
+        // Reservar
+        function reservarAssentos() {
+            let temSelecionado = false;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (assentos[i][j] === "selecionado") {
+                        temSelecionado = true;
+                        assentos[i][j] = "ocupado";
+                    }
+                }
+            }
+            
+            if (temSelecionado) {
+                alert("🎉 Reserva confirmada! Assentos marcados como ocupados.");
+                renderizarMatriz();
+                atualizarResumo();
+            } else {
+                alert("⚠️ Nenhum assento selecionado para reservar.");
+            }
+        }
+        
+        // Limpar seleção
+        function limparSelecao() {
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (assentos[i][j] === "selecionado") {
+                        assentos[i][j] = "livre";
+                    }
+                }
+            }
+            renderizarMatriz();
+            atualizarResumo();
+        }
+        
+        // Eventos
+        document.getElementById("btnReservar").addEventListener("click", reservarAssentos);
+        document.getElementById("btnLimpar").addEventListener("click", limparSelecao);
+        
+        // Inicialização
+        aplicarPersonalizacao();
+        renderizarMatriz();
+        atualizarResumo();
+        
+        console.log("🎬 Cinema Matriz 3x4 ativo!");
+        console.log("📝 Edite as variáveis no início do script para personalizar!");
+    </script>
+</body>
+</html>
